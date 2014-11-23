@@ -1,6 +1,5 @@
 # Adore
 
-
 Adore is an extremely lightweight implementation of the Action-Domain-Responder pattern
 
 #### Background
@@ -55,6 +54,8 @@ $app->setResponderFactory(function($responderName) {
 
 ```
 
+Any initial dependency injection needed for your Actions & Responders should be handled within these closures.
+
 #### Error Handling
 Adore attempts to provide some rudimentary error handling capabilities. This is done by providing an action name to dispatch if no route is matched, and additional one to dispatch in the case an exception is thrown during execution. The actual names of these actions can be any name you like, and they are resolved through the same action factory provided by you.
 
@@ -92,6 +93,11 @@ Adore attempts to have a very small footprint on your code. It provides traits i
 
 Actions and Responders in Adore are designed to be invokeable objects. The main entry point for execution of your code will be the ```__invoke``` method.
 
+All methods and properties on the Adore traits are prefixed with _ to avoid any name conflicts with your code.
+
+#### Actions
+An action should be a simple PHP class that uses ```Adore\ActionTrait``` and contains an ```_invoke()``` method. Additionally, you may provide an ```_init()``` method if you need to do additional setup before dispatch. ```_init()``` is called after the action has been fully wired.
+ 
 ```php 
 class MyAction
 {
@@ -102,3 +108,11 @@ class MyAction
         // business logic here
     }
 }
+```
+
+The ```Adore\ActionTrait``` provides the following protected properties:
+
+* ```_params``` - An array of all parameters derived from the routing process
+* ```_request``` - An instance of ```Aura\Web\Request``` that represents the current HTTP request context
+* 
+
