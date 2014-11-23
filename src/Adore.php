@@ -48,7 +48,7 @@ class Application
         $action->_setRequest($request);
         $action->_setParams($route->params);
         $action->_setResponderFactory($this->responderFactory);
-        $action->init();
+        $action->_init();
         return $action;
     }
 
@@ -142,7 +142,7 @@ class Application
             $response = $webFactory->newResponse();
             $responder = $factory($responderName);
             $responder->_setResponse($response);
-            $responder->init();
+            $responder->_init();
             return $responder;
         };
         $this->responderFactory = $responderFactoryProxy;
@@ -178,13 +178,13 @@ trait ActionTrait
         $this->_responderFactory = $responderFactory;
     }
 
-    public function getResponder($responderName = null)
+    public function _getResponder($responderName = null)
     {
         $responderFactory = $this->_responderFactory;
         return $responderFactory($responderName);
     }
 
-    public function init()
+    public function _init()
     {
 
     }
@@ -207,7 +207,7 @@ trait ResponderTrait
         return $this->_response;
     }
 
-    public function init()
+    public function _init()
     {
 
     }
