@@ -4,11 +4,11 @@ Adore is an extremely lightweight implementation of the Action-Domain-Responder 
 
 #### Background
 Action-Domain-Responder is an "improvement" on the traditional idea of MVC as it relates to web applications. Paul Jones
-defines it in detail in this paper. The paper defines patterns and separation of concerns, but does not provide any
-concrete implementation details, and specifically addresses a lack of "glue" for the various concepts. Adore attempts
-to be that glue, providing routing, dispatching, and response handling. Additionally, Adore provides a way to wire
-together the action and response components.  Furthermore, Adore subscribes to the Ed Finkler's Micro-PHP Manifesto. Adore
-is provided in it's entirety as one PHP file containing one class and two traits.
+defines it in detail here: [Action-Domain-Responder](https://github.com/pmjones/adr). The paper defines patterns and 
+separation of concerns, but does not provide any concrete implementation details, and specifically addresses a lack of 
+"glue" for the various concepts. Adore attempts to be that glue, providing routing, dispatching, and response handling. 
+Additionally, Adore provides a way to wire together the action and response components. Adore is provided in it's entirety 
+    as one PHP file containing one class and two traits.
 
 #### Dependencies
 In an attempt to not reinvent the wheel, Adore relies on ```Aura\Web``` and ```Aura\Router``` rather than providing a
@@ -37,7 +37,9 @@ $app = new Adore\Application;
 ```
 
 #### Wiring Actions & Responders
-Adore assumes you'll generally provide your own methods for loading Action and Responder classes, presumably PSR autoloading. Adore still needs to know how to resolve the names of these classes. This is done with factory closures. The following examples assumes but does not enforce a basic application namespace organization.
+Adore assumes you'll generally provide your own methods for loading Action and Responder classes, presumably PSR autoloading. 
+Adore still needs to know how to resolve the names of these classes. This is done with factory closures. The following 
+examples assumes but does not enforce a basic application namespace organization.
 
 ```php
 $app->setActionFactory(function($actionName) {
@@ -59,7 +61,9 @@ Any initial dependency injection needed for your Actions & Responders should be 
 *NOTE: The responder factory your specify will be wrapped in another closure to aid in injecting a ```Response``` object.*
 
 #### Error Handling
-Adore attempts to provide some rudimentary error handling capabilities. This is done by providing an action name to dispatch if no route is matched, and additional one to dispatch in the case an exception is thrown during execution. The actual names of these actions can be any name you like, and they are resolved through the same action factory provided by you.
+Adore attempts to provide some rudimentary error handling capabilities. This is done by providing an action name to dispatch 
+if no route is matched, and additional one to dispatch in the case an exception is thrown during execution. The actual names 
+of these actions can be any name you like, and they are resolved through the same action factory provided by you.
 
 ```php
 $app->setErrorAction("Error");
@@ -67,7 +71,9 @@ $app->setNotFoundAction("Notfound");
 ```
 
 #### Routing
-Adore proxies ```Aura\Router```. For a full routing syntax, refer to the ```Aura\Router``` documentation. Routes take at a minumum, a path to match and an action name. Optionally, you may specificy which HTTP verbs routes match to, as well as additional parameters to be injection into the action.
+Adore proxies ```Aura\Router```. For a full routing syntax, refer to the [```Aura\Router``` documentation](https://github.com/auraphp/Aura.Router).
+Routes take at a minumum, a path to match and an action name. Optionally, you may specificy which HTTP verbs routes match 
+to, as well as additional parameters to be injection into the action.
 
 ```php
 // Route with plain path matching
@@ -134,7 +140,8 @@ parameters such that the params are passed to your function, as a convenience.
 The ```Adore\ActionTrait``` provides the following protected properties:
 
 * ```_params``` - An array of all parameters derived from the routing process
-* ```_request``` - An instance of ```Aura\Web\Request``` that represents the current HTTP request context
+* ```_request``` - An instance of ```Aura\Web\Request``` that represents the current HTTP request context. For a complete
+listing of ```Aura\Web\Request``` features, please see the [```Aura\Web``` documentation](https://github.com/auraphp/Aura.Web)
 
 The ```Adore\ActionTrait``` has a reference to the Responder factory, and provides a helper method ```->getResponder($responderName)```
 that can generate wired and initialized responders from inside your action. This is the preferred method to instantiate a Responder.
@@ -163,4 +170,4 @@ class MyResponder
 The ```Adore\ResponderTrait``` provides the following protected properties:
 
 * ```_response``` - An instance of ```Aura\Web\Request```. For a full listing of the functionality of the ```Aura\Web\Response``` 
-object, please see the Aura.Web documentation.
+object, please see the [```Aura\Web``` documentation](https://github.com/auraphp/Aura.Web).
