@@ -36,3 +36,46 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 $app = new Adore\Application;
 ```
+
+#### Wiring Actions & Responders
+Adore assumes you'll generally provide your own methods for loading Action and Responder classes, presumably PSR autoloading. Adore still needs to know how to resolve the names of these classes. This is done with factory closures. The following examples assumes but does not enforce a basic application namespace organization.
+
+```php
+$app->setActionFactory(function($actionName) {
+    $properActionName = ucfirst($actionName) . "Action";
+    $className = "\\MyApp\\Action\\$properActionName";
+    return new $className;
+});
+
+$app->setResponderFactory(function($responderName) {
+    $properResponderName = ucfirst($responderName) . "Responder";
+    $className = "\\MyApp\\Responder\\$properResponderName";
+    return new $className;
+});
+
+```
+
+#### Error Handling
+Adore attempts to provide some rudimentary error handling capabilities. This is done by providing an action name to dispatch if no route is matched, and additional one to dispatch in the case an exception is thrown during execution. The actual names of these actions can be any name you like, and they are resolved through the same action factory provided by you.
+
+```php
+$app->setErrorAction("Error");
+$app->setNotFoundAction("Notfound");
+```
+
+#### Routing
+Adore proxies ```Aura\Router```. For a full routing syntax, refer to the ```Aura\Router``` documentation. Routes take at a minumum, a path to match and an action name. Optionally, you may specificy which HTTP verbs routes match to, as well as additional parameters to be injection into the action.
+
+```php
+// Route with plain path matching
+$app->addRoute("/", "Homepage");
+
+// Route with url parameters
+$app->addRoute("/blog/post/{post_slug}", "BlogPost");
+
+// Route that will only match on a POST request
+$app->addRoute("/login", "Login", ["POST"]);
+
+// Route with additional hard-coded parameters
+$app->addRoute("/about", "StaticContent", ["file" => "about.md"]);
+```
