@@ -1,6 +1,8 @@
 # Adore
 
-Adore is an extremely lightweight implementation of the Action-Domain-Responder pattern
+Adore is an extremely lightweight implementation of the Action-Domain-Responder pattern. Currently, this code "works",
+but should be be considered a pre-alpha draft. I dont' envision it growing in feature complexity, but the API could change
+considerably based on discoveries made when actually building applications with Adore.
 
 #### Background
 Action-Domain-Responder is an "improvement" on the traditional idea of MVC as it relates to web applications. Paul Jones
