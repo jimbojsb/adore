@@ -56,6 +56,8 @@ $app->setResponderFactory(function($responderName) {
 
 Any initial dependency injection needed for your Actions & Responders should be handled within these closures.
 
+*NOTE: The responder factory your specify will be wrapped in another closure to aid in injecting a ```Response``` object.*
+
 #### Error Handling
 Adore attempts to provide some rudimentary error handling capabilities. This is done by providing an action name to dispatch if no route is matched, and additional one to dispatch in the case an exception is thrown during execution. The actual names of these actions can be any name you like, and they are resolved through the same action factory provided by you.
 
@@ -88,6 +90,19 @@ Once you've configured your ```Adore\Application``` instance, actually dispatchi
 $app->run();
 ```
 
+The order of operations for dispatching a request is roughly as follows:
+
+1. Create a new ```Aura\Web\Request``` object
+2. Create a new ```Aura\Router``` object and load it with the route definitions
+3. Route the request
+4. Create the appropriate action object using the supplied action factory
+5. Inject params, request, responder factory onto the action
+6. Call ```_init()``` on the action
+7. Dispatch the action, which should return a responder
+8. Invoke the responder
+9. Get the response object from the responder and send it to the client
+
+
 # Creating Actions & Responders
 Adore attempts to have a very small footprint on your code. It provides traits instead of interfaces or abstract classes so your application inheritance tree can be completely up to you. The traits that Adore provides are mainly for dependency injection and convenience. They are not strictly required as PHP cannot type check traits, but should you choose not to use them, you would need to implement their methods and properties manually. 
 
@@ -96,7 +111,9 @@ Actions and Responders in Adore are designed to be invokeable objects. The main 
 All methods and properties on the Adore traits are prefixed with _ to avoid any name conflicts with your code.
 
 #### Actions
-An action should be a simple PHP class that uses ```Adore\ActionTrait``` and contains an ```_invoke()``` method. Additionally, you may provide an ```_init()``` method if you need to do additional setup before dispatch. ```_init()``` is called after the action has been fully wired.
+An action should be a simple PHP class that uses ```Adore\ActionTrait``` and contains an ```_invoke()``` method. Additionally,
+you may provide an ```_init()``` method if you need to do additional setup before dispatch. ```_init()``` is called after 
+the action has been fully wired. *Your action is expected to return an invokeable responder.*
  
 ```php 
 class MyAction
@@ -106,13 +123,44 @@ class MyAction
     public function __invoke()
     {
         // business logic here
+        return new Responder($data);
     }
 }
 ```
+
+If your ```_invoke``` method has arguments, Adore will attempt to match those named properties with keys from the request
+parameters such that the params are passed to your function, as a convenience.
 
 The ```Adore\ActionTrait``` provides the following protected properties:
 
 * ```_params``` - An array of all parameters derived from the routing process
 * ```_request``` - An instance of ```Aura\Web\Request``` that represents the current HTTP request context
-* 
 
+The ```Adore\ActionTrait``` has a reference to the Responder factory, and provides a helper method ```->getResponder($responderName)```
+that can generate wired and initialized responders from inside your action. This is the preferred method to instantiate a Responder.
+
+#### Responders
+
+A responder should be a simple PHP class that uses ```Adore\ResponderTrait``` and contains an ```_invoke()``` method. Additionally,
+you may provide an ```_init()``` method if you need to do additional setup before dispatch. ```_init()``` is called after 
+the responder has been fully wired. Your responder will be pre-injected with a ```Aura\Web\Response``` object. It should 
+act on that object appropriately. After invoking your responder, Adore will use that response object to send a properly
+formed HTTP response to the client.
+ 
+```php 
+class MyResponder
+{
+    use \Adore\ResponderTrait;
+    
+    public function __invoke()
+    {
+        // presentation logic here
+        $this->_response->content->set("Hello World");
+    }
+}
+```
+
+The ```Adore\ResponderTrait``` provides the following protected properties:
+
+* ```_response``` - An instance of ```Aura\Web\Request```. For a full listing of the functionality of the ```Aura\Web\Response``` 
+object, please see the Aura.Web documentation.
