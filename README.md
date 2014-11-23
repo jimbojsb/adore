@@ -16,7 +16,7 @@ In an attempt to not reinvent the wheel, Adore relies on ```Aura\Web``` and ```A
 bespoke implementation of these functions. This allows Adore to be extremely concise and focus on solving only the unsolved
 portion of the problem.
 
-## Installation
+## Installation & Runtime Configuration
 Adore, while provided as a single PHP file, does have external dependencies. As such, the only recommended installation
 method is with Composer. Add the following to your ```composer.json```
 
@@ -86,3 +86,19 @@ Once you've configured your ```Adore\Application``` instance, actually dispatchi
 ```php
 $app->run();
 ```
+
+# Creating Actions & Responders
+Adore attempts to have a very small footprint on your code. It provides traits instead of interfaces or abstract classes so your application inheritance tree can be completely up to you. The traits that Adore provides are mainly for dependency injection and convenience. They are not strictly required as PHP cannot type check traits, but should you choose not to use them, you would need to implement their methods and properties manually. 
+
+Actions and Responders in Adore are designed to be invokeable objects. The main entry point for execution of your code will be the ```__invoke``` method.
+
+```php 
+class MyAction
+{
+    use \Adore\ActionTrait;
+    
+    public function __invoke()
+    {
+        // business logic here
+    }
+}
