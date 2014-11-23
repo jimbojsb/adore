@@ -171,3 +171,9 @@ The ```Adore\ResponderTrait``` provides the following protected properties:
 
 * ```_response``` - An instance of ```Aura\Web\Request```. For a full listing of the functionality of the ```Aura\Web\Response``` 
 object, please see the [```Aura\Web``` documentation](https://github.com/auraphp/Aura.Web).
+
+
+# Known Issues
+
+* Error action handling and exception catching is barely working if at all
+* Relies heavily on ```Aura``` components. Perhaps this could be improved in light of PSR-7?
