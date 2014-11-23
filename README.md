@@ -79,3 +79,10 @@ $app->addRoute("/login", "Login", ["POST"]);
 // Route with additional hard-coded parameters
 $app->addRoute("/about", "StaticContent", ["file" => "about.md"]);
 ```
+
+#### Dispatching
+Once you've configured your ```Adore\Application``` instance, actually dispatching it is as simple as calling:
+
+```php
+$app->run();
+```
