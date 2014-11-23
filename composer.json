@@ -2,7 +2,6 @@
     "name": "jimbojsb/adore",
     "description": "A lightweight Action-Domain-Responder framework based on Aura components",
     "require": {
-        "aura/dispatcher": "2.*",
         "aura/router": "2.*",
         "aura/web": "2.*"
     },
