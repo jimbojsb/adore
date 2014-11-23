@@ -1,0 +1,21 @@
+{
+    "name": "jimbojsb/adore",
+    "description": "A lightweight Action-Domain-Responder framework based on Aura components",
+    "require": {
+        "aura/dispatcher": "2.*",
+        "aura/router": "2.*",
+        "aura/web": "2.*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Josh Butts",
+            "email": "josh@joshbutts.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "src/Adore.php"
+        ]
+    }
+}
