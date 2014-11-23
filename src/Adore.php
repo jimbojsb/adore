@@ -55,8 +55,24 @@ class Application
     protected function dispatch($action)
     {
         try {
-            $responder = $action();
+
+            $r = new \ReflectionMethod(get_class($action), "__invoke");
+            $methodParams = $r->getParameters();
+            $requestedParams = [];
+
+            foreach ($methodParams as $param) {
+                $requestedParams[] = $param->name;
+            }
+
+            $availableParams = $action->_getParams();
+            $paramsToPass = [];
+            foreach ($requestedParams as $param) {
+                $paramsToPass[] = $availableParams[$param];
+            }
+
+            $responder = call_user_func_array($action, $paramsToPass);
             return $responder;
+
         } catch (\Exception $e) {
             die('exception'); // @todo make this work
         }
@@ -136,7 +152,7 @@ class Application
 trait ActionTrait
 {
     /**
-     * @var Aura\Web\Request
+     * @var \Aura\Web\Request
      */
     protected $_request;
     protected $_params = [];
@@ -150,6 +166,11 @@ trait ActionTrait
     public function _setParams($params)
     {
         $this->_params = $params;
+    }
+
+    public function _getParams()
+    {
+        return $this->_params;
     }
 
     public function _setResponderFactory(\Closure $responderFactory)
@@ -172,7 +193,7 @@ trait ActionTrait
 trait ResponderTrait
 {
     /**
-     * @var Aura\Web\Response
+     * @var \Aura\Web\Response
      */
     protected $_response;
 
