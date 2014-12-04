@@ -31,8 +31,9 @@ class Application
             $route->addValues($routeSpec["params"]);
             if ($routeSpec["methods"]) {
                 foreach ($routeSpec["methods"] as $method) {
-                    $route->addMethod($routeSpec["method"]);
+                    $route->addMethod($method);
                 }
+                unset($method);
             }
         }
 
